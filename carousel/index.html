@@ -3,7 +3,88 @@
 <html>
 <head>
     <title>AHUISA</title>
-    <link href="style.css" type="text/css" rel="stylesheet">
+    <style type="text/css">
+    	/*AHUISA*/
+		body {
+
+			text-align: center;
+			margin: 0;
+			padding-top: 0;
+		}
+
+
+
+		.slider {
+			margin: 10px auto ;
+			overflow: hidden;
+		    position: relative;
+		    width: 600px;
+		    height: 400px;
+		}
+
+		.singleSlide {
+
+			background-size: cover;
+			height: 400px;
+			position: absolute;
+			left: 100%;
+			width: 100%;
+			top: 0px;
+		}
+
+		.slideOverlay {
+			background-color: rgba(0, 0, 0, 0.5);
+			padding: 50px;
+		}
+
+
+			
+		@-webkit-keyframes slideIn {
+		    100% { left: 0; }
+		}
+
+		@keyframes slideIn {
+		    100% { left: 0; }
+		}
+
+		.slideInRight {
+			left: -100%;
+			-webkit-animation: slideIn 1s forwards;
+		    animation: slideIn 1s forwards;
+		}
+
+		.slideInLeft {
+			left: 100%;
+			-webkit-animation: slideIn 1s forwards;
+		    animation: slideIn 1s forwards;
+		}
+
+		@-webkit-keyframes slideOutLeft {
+		    100% { left: -100%; }
+		}
+
+		@keyframes slideOutLeft {
+		    100% { left: -100%; }
+		}
+
+		.slideOutLeft {
+			-webkit-animation: slideOutLeft 1s forwards;
+		    animation: slideOutLeft 1s forwards;
+		}
+
+		@-webkit-keyframes slideOutRight {
+		    100% { left: 100%; }
+		}
+
+		@keyframes slideOutRight {
+		    100% { left: 100%; }
+		}
+
+		.slideOutRight {
+			-webkit-animation: slideOutRight 1s forwards;
+		    animation: slideOutRight 1s forwards;
+		}
+    </style>
 </head>
 <body>
 	<div id="container-slider">
@@ -12,9 +93,156 @@
 			<img src="db2.jpg" title="" />
 		</div>
 	</div>
-	<script type="text/javascript" src="js.js"></script>
+
+
+
+
 	<script type="text/javascript">
-		slideCarousel.slide("slider", true);
+		/*AHUISA*/
+		var slideCarousel = {
+		  slideIndex :  0,
+		  currentSlideIndex : 0,
+		  timeAuto: null,
+		  slideArray : [],
+		  slide : function (container, isAppend, direction, auto, time){
+		    var slideContainer = document.getElementById(container);
+		    var items = slideContainer.getElementsByTagName("img");
+		    for (var i = 0; i < items.length; ++i) {
+		      var item = {
+		        title : items[i].title,
+		        id : container + "_slide" + slideCarousel.slideIndex,
+		        background : items[i].src
+		      }
+		      slideCarousel.slideIndex++;
+		      
+		      slideCarousel.slideArray.push(item);
+		    }
+		    slideCarousel.buildSlider(container);
+		    slideCarousel.createButtons(container, isAppend, auto, time, direction);
+		    if(auto)
+		      slideCarousel.automaticSlide(container, time, direction);
+		  }, 
+		  automaticSlide: function(container, time, direction){
+		    slideCarousel.timeAuto = setInterval(function(){
+		      slideCarousel.directionSlider(container, direction);
+		    }, time);
+		  },
+		  directionSlider: function(container, direction){
+		    var nextSlideIndex;
+		    if (slideCarousel.currentSlideIndex === 0 ) {
+		      nextSlideIndex = slideCarousel.slideArray.length - 1;
+		    } else {
+		      nextSlideIndex = slideCarousel.currentSlideIndex - 1;
+		    } 
+		    if(!direction){
+		    document.getElementById(container + "_slide" + nextSlideIndex).style.left = "100%";
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+		    
+		    document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInRight");
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutLeft");
+		    } else {
+		      document.getElementById(container + "_slide" + nextSlideIndex).style.left = "-100%";
+		      document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+		      
+		      document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInLeft");
+		      document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutRight");
+		    }
+		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		  },
+		  buildSlider: function(container){
+		    var myHTML = "";
+
+		    for(var i = 0; i < slideCarousel.slideArray.length; i++) {
+		      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
+		      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
+		      "</div>"; 
+
+		    }
+		    document.getElementById(container).innerHTML = myHTML;
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+		  },
+		  createButtons : function(container, isAppend, auto, time, direction) {
+		    var slideContainer = document.getElementById("container-" + container);
+		    var btnLeft = document.createElement("BUTTON");
+		    var btnRight = document.createElement("BUTTON");
+		    var tl = document.createTextNode("<<");
+		    var tr = document.createTextNode(">>");
+
+
+		    btnLeft.appendChild(tl);
+		    btnRight.appendChild(tr);
+
+		    btnLeft.setAttribute('OnClick', 'slideCarousel.prevSlide("' + container + '", ' + auto + ', ' + time + ', ' + direction + ')');
+		    btnRight.setAttribute('OnClick', 'slideCarousel.nextSlide("'+ container + '", ' + auto + ', ' + time + ', ' + direction + ')');
+
+		    if(isAppend){
+		      slideContainer.appendChild(btnLeft);
+		      slideContainer.appendChild(btnRight);
+		    }else {
+		      slideContainer.insertBefore(btnRight, slideContainer.firstChild);
+		      slideContainer.insertBefore(btnLeft, slideContainer.firstChild);
+		    }
+		  }, 
+		  prevSlide: function(container, auto, time, direction){
+		    if(auto)
+		      clearInterval(slideCarousel.timeAuto);
+		    var nextSlideIndex;
+		    if (slideCarousel.currentSlideIndex === 0 ) {
+		      nextSlideIndex = slideCarousel.slideArray.length - 1;
+		    } else {
+		      nextSlideIndex = slideCarousel.currentSlideIndex - 1;
+		    } 
+		    
+		    document.getElementById(container + "_slide" + nextSlideIndex).style.left = "-100%";
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+		    
+		    document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInLeft");
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutRight");
+		    
+		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		    if(auto)
+		      slideCarousel.automaticSlide(container, time, direction);
+		  },
+		  nextSlide: function(container, auto, time, direction){
+		    if(auto)
+		      clearInterval(slideCarousel.timeAuto);
+		    var nextSlideIndex;
+		    if (slideCarousel.currentSlideIndex === (slideCarousel.slideArray.length - 1) ) {
+		      nextSlideIndex = 0;
+		    } else {
+		      nextSlideIndex = slideCarousel.currentSlideIndex + 1;
+		    } 
+		    
+		    document.getElementById(container + "_slide" + nextSlideIndex).style.left = "100%";
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+		    
+		    document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInRight");
+		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutLeft");
+		    
+		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		    if(auto)
+		      slideCarousel.automaticSlide(container, time, direction);
+		  }
+
+		}
+	</script>
+	<script type="text/javascript">
+		/*
+			Parametros del mètodo slideCarousel.slide
+			1: id del contenedor del slider
+			2: posicion de los botones
+				true: abajo
+				false: arriba
+			3: direccion del movimiento
+				true: derecha
+				false: izquiera
+			4: movimiento automatico
+				true: automatico
+				false: estatico
+			5: tiempo de duracion en milisegundos
+				ejemplo: 3000 milisegundos = 3 segundos
+		*/
+		slideCarousel.slide("slider", true, true, true, 3000);
 	</script>
 </body>
 </html>
