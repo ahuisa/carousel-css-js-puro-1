@@ -81,7 +81,7 @@
 		  slide : function (container, isAppend, direction, auto, time, transitionTime, mostrarBotones){
 		    var slideContainer = document.getElementById(container);
 		    var items = slideContainer.getElementsByTagName("img");
-		    if(!mostrarBotones && direction){
+		    if(direction){
 
 				var item = {
 					title : items[0].title,
@@ -221,24 +221,12 @@
 		  },
 		  buildSlider: function(container){
 		    var myHTML = "";
-		    /*if(!slideCarousel.showButton && slideCarousel.directionLeft){
-				myHTML += "<div id='" + slideCarousel.slideArray[0].id + 
-				"' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[0].background + ");'>" + 
-				"</div>"; 
-			    for(var i = slideCarousel.slideArray.length - 1; i > 0; i--) {
-			      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
-			      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
-			      "</div>"; 
+		    for(var i = 0; i < slideCarousel.slideArray.length; i++) {
+		      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
+		      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
+		      "</div>"; 
 
-			    }
-			} else {*/
-			    for(var i = 0; i < slideCarousel.slideArray.length; i++) {
-			      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
-			      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
-			      "</div>"; 
-
-			    }
-			//}
+		    }
 		    document.getElementById(container).innerHTML = myHTML;
 		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
 		  },
@@ -321,11 +309,11 @@
 	<script type="text/javascript">
 		var idSlider = "slider"; //id del slider
 		var botonesAbajo = true; // abajo = true, arriba = false
-		var direccionIzquierda = true; //Izquierda = true, derecha = false
+		var direccionIzquierda = false; //Izquierda = true, derecha = false
 		var movimientoAutomatico = true; // Automatico = true, Estatico = false
 		var tiempoDuracion = 6000; // Tiempo en milisegundos
 		var tiempoTransicionAnimacion = 2; // Tiempo en segundos
-		var mostrarBotones = false; // mostrar = true, ocultar = false
+		var mostrarBotones = true; // mostrar = true, ocultar = false
 
 		slideCarousel.slide(idSlider, botonesAbajo, direccionIzquierda, movimientoAutomatico, tiempoDuracion, tiempoTransicionAnimacion, mostrarBotones);
 	</script>
