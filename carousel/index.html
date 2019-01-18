@@ -75,7 +75,7 @@
 		  currentSlideIndex : 0,
 		  timeAuto: null,
 		  slideArray : [],
-		  slide : function (container, isAppend, direction, auto, time, transitionTime){
+		  slide : function (container, isAppend, direction, auto, time, transitionTime, mostrarBotones){
 		    var slideContainer = document.getElementById(container);
 		    var items = slideContainer.getElementsByTagName("img");
 		    for (var i = 0; i < items.length; ++i) {
@@ -90,7 +90,9 @@
 		    }
 		    slideCarousel.createTransitionTime(transitionTime);
 		    slideCarousel.buildSlider(container);
-		    slideCarousel.createButtons(container, isAppend, auto, time, direction);
+		    if(mostrarBotones)
+		    	slideCarousel.createButtons(container, isAppend, auto, time, direction);
+		    
 		    if(auto)
 		      slideCarousel.automaticSlide(container, time, direction);
 		  }, 
@@ -108,14 +110,14 @@
 
 			styleText += '.slideInRight {';
 			styleText += 'left: -100%;';
-			styleText += '-webkit-animation: slideIn 1s forwards;';
-			styleText += 'animation: slideIn 1s forwards;';
+			styleText += '-webkit-animation: slideIn ' + transitionTime + 's forwards;';
+			styleText += 'animation: slideIn ' + transitionTime + 's forwards;';
 			styleText += '} ';
 
 			styleText += '.slideInLeft {';
 			styleText += 'left: 100%;';
-			styleText += '-webkit-animation: slideIn 1s forwards;';
-			styleText += 'animation: slideIn 1s forwards;';
+			styleText += '-webkit-animation: slideIn ' + transitionTime + 's forwards;';
+			styleText += 'animation: slideIn ' + transitionTime + 's forwards;';
 			styleText += '} ';
 
 			styleText += '@-webkit-keyframes slideOutLeft {';
@@ -127,8 +129,8 @@
 			styleText += '} ';
 
 			styleText += '.slideOutLeft {';
-			styleText += '-webkit-animation: slideOutLeft 1s forwards;';
-			styleText += 'animation: slideOutLeft 1s forwards;';
+			styleText += '-webkit-animation: slideOutLeft ' + transitionTime + 's forwards;';
+			styleText += 'animation: slideOutLeft ' + transitionTime + 's forwards;';
 			styleText += '} ';
 
 			styleText += '@-webkit-keyframes slideOutRight {';
@@ -140,8 +142,8 @@
 			styleText += '} ';
 
 			styleText += '.slideOutRight {';
-			styleText += '-webkit-animation: slideOutRight 1s forwards;';
-			styleText += 'animation: slideOutRight 1s forwards;';
+			styleText += '-webkit-animation: slideOutRight ' + transitionTime + 's forwards;';
+			styleText += 'animation: slideOutRight ' + transitionTime + 's forwards;';
 			styleText += '} ';   
 			style.type = 'text/css';
 			style.innerHTML = styleText;
@@ -259,10 +261,11 @@
 		var botonesAbajo = true; // abajo = true, arriba = false
 		var direccionIzquierda = true; //Izquierda = true, derecha = false
 		var movimientoAutomatico = true; // Automatico = true, Estatico = false
-		var tiempoDuracion = 3000; // Tiempo en milisegundos
-		var tiempoTransicionAnimacion = 1; // Tiempo en segundos
+		var tiempoDuracion = 6000; // Tiempo en milisegundos
+		var tiempoTransicionAnimacion = 3; // Tiempo en segundos
+		var mostrarBotones = true; // mostrar = true, ocultar = false
 
-		slideCarousel.slide(idSlider, botonesAbajo, direccionIzquierda, movimientoAutomatico, tiempoDuracion, tiempoTransicionAnimacion);
+		slideCarousel.slide(idSlider, botonesAbajo, direccionIzquierda, movimientoAutomatico, tiempoDuracion, tiempoTransicionAnimacion, mostrarBotones);
 	</script>
 </body>
 </html>
