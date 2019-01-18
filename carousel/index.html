@@ -62,6 +62,7 @@
 		<div class="slider" id="slider">
 			<img src="db1.jpg" title="" />
 			<img src="db2.jpg" title="" />
+			<img src="db3.jpg" title="" />
 		</div>
 	</div>
 
@@ -75,19 +76,46 @@
 		  currentSlideIndex : 0,
 		  timeAuto: null,
 		  slideArray : [],
+		  showButton : false,
+		  directionLeft : true,
 		  slide : function (container, isAppend, direction, auto, time, transitionTime, mostrarBotones){
 		    var slideContainer = document.getElementById(container);
 		    var items = slideContainer.getElementsByTagName("img");
-		    for (var i = 0; i < items.length; ++i) {
-		      var item = {
-		        title : items[i].title,
-		        id : container + "_slide" + slideCarousel.slideIndex,
-		        background : items[i].src
-		      }
-		      slideCarousel.slideIndex++;
-		      
-		      slideCarousel.slideArray.push(item);
-		    }
+		    if(!mostrarBotones && direction){
+
+				var item = {
+					title : items[0].title,
+					id : container + "_slide" + slideCarousel.slideIndex,
+					background : items[0].src
+				}
+				slideCarousel.slideIndex++;
+
+				slideCarousel.slideArray.push(item);
+			    for (var i = items.length - 1; i > 0; i--) {
+			     	item = {
+			        	title : items[i].title,
+			        	id : container + "_slide" + slideCarousel.slideIndex,
+			        	background : items[i].src
+			      	}
+			      	slideCarousel.slideIndex++;
+			      
+			      	slideCarousel.slideArray.push(item);
+			    }
+			} else {
+			    for (var i = 0; i < items.length; ++i) {
+			      var item = {
+			        title : items[i].title,
+			        id : container + "_slide" + slideCarousel.slideIndex,
+			        background : items[i].src
+			      }
+			      slideCarousel.slideIndex++;
+			      
+			      slideCarousel.slideArray.push(item);
+			    }
+
+			}
+		    slideCarousel.showButton = mostrarBotones;
+		    slideCarousel.directionLeft = direction;
 		    slideCarousel.createTransitionTime(transitionTime);
 		    slideCarousel.buildSlider(container);
 		    if(mostrarBotones)
@@ -155,20 +183,30 @@
 		    }, time);
 		  },
 		  directionSlider: function(container, direction, transitionTime){
-		    document.getElementById("btnRight").setAttribute('disabled', true);
-		    document.getElementById("btnLeft").setAttribute('disabled', true);
+		  	if(slideCarousel.showButton){
+		    	document.getElementById("btnRight").setAttribute('disabled', true);
+		    	document.getElementById("btnLeft").setAttribute('disabled', true);
+			}
 		    var nextSlideIndex;
-		    if (slideCarousel.currentSlideIndex === 0 ) {
-		      nextSlideIndex = slideCarousel.slideArray.length - 1;
+		    if(!slideCarousel.directionLeft){
+			    if (slideCarousel.currentSlideIndex === (slideCarousel.slideArray.length - 1) ) {
+			      nextSlideIndex = 0;
+			    } else {
+			      nextSlideIndex = slideCarousel.currentSlideIndex + 1;
+			    } 
 		    } else {
-		      nextSlideIndex = slideCarousel.currentSlideIndex - 1;
-		    } 
+			    if (slideCarousel.currentSlideIndex === 0 ) {
+			      	nextSlideIndex = slideCarousel.slideArray.length - 1;
+			    } else {
+			      nextSlideIndex = slideCarousel.currentSlideIndex - 1;
+			    } 
+			}
 		    if(!direction){
-		    document.getElementById(container + "_slide" + nextSlideIndex).style.left = "100%";
-		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
-		    
-		    document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInRight");
-		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutLeft");
+			    document.getElementById(container + "_slide" + nextSlideIndex).style.left = "100%";
+			    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
+			    
+			    document.getElementById(container + "_slide" + nextSlideIndex).setAttribute("class", "singleSlide slideInRight");
+			    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutLeft");
 		    } else {
 		      document.getElementById(container + "_slide" + nextSlideIndex).style.left = "-100%";
 		      document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
@@ -177,17 +215,30 @@
 		      document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutRight");
 		    }
 		    slideCarousel.currentSlideIndex = nextSlideIndex;
-		  	setTimeout(function() {document.getElementById("btnRight").removeAttribute('disabled');document.getElementById("btnLeft").removeAttribute('disabled');}, transitionTime * 1000);
+		  	if(slideCarousel.showButton){
+		  		setTimeout(function() {document.getElementById("btnRight").removeAttribute('disabled');document.getElementById("btnLeft").removeAttribute('disabled');}, transitionTime * 1000);
+		  	}
 		  },
 		  buildSlider: function(container){
 		    var myHTML = "";
+		    /*if(!slideCarousel.showButton && slideCarousel.directionLeft){
+				myHTML += "<div id='" + slideCarousel.slideArray[0].id + 
+				"' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[0].background + ");'>" + 
+				"</div>"; 
+			    for(var i = slideCarousel.slideArray.length - 1; i > 0; i--) {
+			      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
+			      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
+			      "</div>"; 
 
-		    for(var i = 0; i < slideCarousel.slideArray.length; i++) {
-		      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
-		      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
-		      "</div>"; 
+			    }
+			} else {*/
+			    for(var i = 0; i < slideCarousel.slideArray.length; i++) {
+			      myHTML += "<div id='" + slideCarousel.slideArray[i].id + 
+			      "' class='singleSlide' style='background-image:url(" + slideCarousel.slideArray[i].background + ");'>" + 
+			      "</div>"; 
 
-		    }
+			    }
+			//}
 		    document.getElementById(container).innerHTML = myHTML;
 		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
 		  },
@@ -274,7 +325,7 @@
 		var movimientoAutomatico = true; // Automatico = true, Estatico = false
 		var tiempoDuracion = 6000; // Tiempo en milisegundos
 		var tiempoTransicionAnimacion = 2; // Tiempo en segundos
-		var mostrarBotones = true; // mostrar = true, ocultar = false
+		var mostrarBotones = false; // mostrar = true, ocultar = false
 
 		slideCarousel.slide(idSlider, botonesAbajo, direccionIzquierda, movimientoAutomatico, tiempoDuracion, tiempoTransicionAnimacion, mostrarBotones);
 	</script>
