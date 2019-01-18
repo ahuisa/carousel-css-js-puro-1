@@ -97,59 +97,52 @@
 		  createTransitionTime: function(transitionTime){
 		    var style = document.createElement('style');
 		    var styleText = "";
+	
+			styleText += '@-webkit-keyframes slideIn { ';
+			styleText += '100% { left: 0; } ';
+			styleText += '} '; 
+
+			styleText += '@keyframes slideIn { ';
+			styleText += '100% { left: 0; } ';
+			styleText += '} '; 
 
 			styleText += '.slideInRight {';
 			styleText += 'left: -100%;';
-			styleText += '-webkit-animation: slideIn '+ transitionTime + 's forwards;';
-			styleText += 'animation: slideIn '+ transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideIn 1s forwards;';
+			styleText += 'animation: slideIn 1s forwards;';
 			styleText += '} ';
 
 			styleText += '.slideInLeft {';
 			styleText += 'left: 100%;';
-			styleText += '-webkit-animation: slideIn '+ transitionTime + 's forwards;';
-			styleText += 'animation: slideIn '+ transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideIn 1s forwards;';
+			styleText += 'animation: slideIn 1s forwards;';
 			styleText += '} ';
-
-			styleText += '.slideOutLeft {';
-			styleText += '-webkit-animation: slideOutLeft '+ transitionTime + 's forwards;';
-			styleText += 'animation: slideOutLeft '+ transitionTime + 's forwards;';
-			styleText += '} ';
-
-			styleText += '.slideOutRight {';
-			styleText += '-webkit-animation: slideOutRight '+ transitionTime + 's forwards;';
-			styleText += 'animation: slideOutRight '+ transitionTime + 's forwards;';
-			styleText += '} ';
-
-
-
-
-			
-			styleText += '@-webkit-keyframes slideIn {';
-			styleText += '100% { left: 0; }';
-			styleText += '} ';
-
-			styleText += '@keyframes slideIn {';
-			styleText += '100% { left: 0; } ';
-			styleText += '} ';
-
 
 			styleText += '@-webkit-keyframes slideOutLeft {';
-			styleText += '100% { left: -100%; } ';
+			styleText += '100% { left: -100%; }';
 			styleText += '} ';
 
 			styleText += '@keyframes slideOutLeft {';
-			styleText += '100% { left: -100%; } ';
+			styleText += '100% { left: -100%; }';
 			styleText += '} ';
 
+			styleText += '.slideOutLeft {';
+			styleText += '-webkit-animation: slideOutLeft 1s forwards;';
+			styleText += 'animation: slideOutLeft 1s forwards;';
+			styleText += '} ';
 
 			styleText += '@-webkit-keyframes slideOutRight {';
-			styleText += '100% { left: 100%; } ';
+			styleText += '100% { left: 100%; }';
 			styleText += '} ';
 
 			styleText += '@keyframes slideOutRight {';
-			 styleText += '00% { left: 100%; } ';
+			styleText += '100% { left: 100%; }';
 			styleText += '} ';
 
+			styleText += '.slideOutRight {';
+			styleText += '-webkit-animation: slideOutRight 1s forwards;';
+			styleText += 'animation: slideOutRight 1s forwards;';
+			styleText += '} ';   
 			style.type = 'text/css';
 			style.innerHTML = styleText;
 			document.getElementsByTagName('head')[0].appendChild(style);
@@ -262,23 +255,14 @@
 		}
 	</script>
 	<script type="text/javascript">
-		/*
-			Parametros del mètodo slideCarousel.slide
-			1: id del contenedor del slider
-			2: posicion de los botones
-				true: abajo
-				false: arriba
-			3: direccion del movimiento
-				true: izquierda
-				false: derecha
-			4: movimiento automatico
-				true: automatico
-				false: estatico
-			5: tiempo de duracion en milisegundos
-				ejemplo: 3000 milisegundos = 3 segundos
-			6: tiempo de transicion de las imagenes en segundos
-		*/
-		slideCarousel.slide("slider", false, true, false, 6000, 1);
+		var idSlider = "slider"; //id del slider
+		var botonesAbajo = true; // abajo = true, arriba = false
+		var direccionIzquierda = true; //Izquierda = true, derecha = false
+		var movimientoAutomatico = true; // Automatico = true, Estatico = false
+		var tiempoDuracion = 3000; // Tiempo en milisegundos
+		var tiempoTransicionAnimacion = 1; // Tiempo en segundos
+
+		slideCarousel.slide(idSlider, botonesAbajo, direccionIzquierda, movimientoAutomatico, tiempoDuracion, tiempoTransicionAnimacion);
 	</script>
 </body>
 </html>
