@@ -91,10 +91,10 @@
 		    slideCarousel.createTransitionTime(transitionTime);
 		    slideCarousel.buildSlider(container);
 		    if(mostrarBotones)
-		    	slideCarousel.createButtons(container, isAppend, auto, time, direction);
+		    	slideCarousel.createButtons(container, isAppend, auto, time, direction, transitionTime);
 		    
 		    if(auto)
-		      slideCarousel.automaticSlide(container, time, direction);
+		      slideCarousel.automaticSlide(container, time, direction, transitionTime);
 		  }, 
 		  createTransitionTime: function(transitionTime){
 		    var style = document.createElement('style');
@@ -110,14 +110,14 @@
 
 			styleText += '.slideInRight {';
 			styleText += 'left: -100%;';
-			styleText += '-webkit-animation: slideIn ' + transitionTime + 's forwards;';
-			styleText += 'animation: slideIn ' + transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideIn ' + transitionTime + 's both;';
+			styleText += 'animation: slideIn ' + transitionTime + 's both;';
 			styleText += '} ';
 
 			styleText += '.slideInLeft {';
 			styleText += 'left: 100%;';
-			styleText += '-webkit-animation: slideIn ' + transitionTime + 's forwards;';
-			styleText += 'animation: slideIn ' + transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideIn ' + transitionTime + 's both;';
+			styleText += 'animation: slideIn ' + transitionTime + 's both;';
 			styleText += '} ';
 
 			styleText += '@-webkit-keyframes slideOutLeft {';
@@ -129,8 +129,8 @@
 			styleText += '} ';
 
 			styleText += '.slideOutLeft {';
-			styleText += '-webkit-animation: slideOutLeft ' + transitionTime + 's forwards;';
-			styleText += 'animation: slideOutLeft ' + transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideOutLeft ' + transitionTime + 's both;';
+			styleText += 'animation: slideOutLeft ' + transitionTime + 's both;';
 			styleText += '} ';
 
 			styleText += '@-webkit-keyframes slideOutRight {';
@@ -142,19 +142,21 @@
 			styleText += '} ';
 
 			styleText += '.slideOutRight {';
-			styleText += '-webkit-animation: slideOutRight ' + transitionTime + 's forwards;';
-			styleText += 'animation: slideOutRight ' + transitionTime + 's forwards;';
+			styleText += '-webkit-animation: slideOutRight ' + transitionTime + 's both;';
+			styleText += 'animation: slideOutRight ' + transitionTime + 's both;';
 			styleText += '} ';   
 			style.type = 'text/css';
 			style.innerHTML = styleText;
 			document.getElementsByTagName('head')[0].appendChild(style);
 		  },
-		  automaticSlide: function(container, time, direction){
+		  automaticSlide: function(container, time, direction, transitionTime){
 		    slideCarousel.timeAuto = setInterval(function(){
-		      slideCarousel.directionSlider(container, direction);
+		      slideCarousel.directionSlider(container, direction, transitionTime);
 		    }, time);
 		  },
-		  directionSlider: function(container, direction){
+		  directionSlider: function(container, direction, transitionTime){
+		    document.getElementById("btnRight").setAttribute('disabled', true);
+		    document.getElementById("btnLeft").setAttribute('disabled', true);
 		    var nextSlideIndex;
 		    if (slideCarousel.currentSlideIndex === 0 ) {
 		      nextSlideIndex = slideCarousel.slideArray.length - 1;
@@ -175,6 +177,7 @@
 		      document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutRight");
 		    }
 		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		  	setTimeout(function() {document.getElementById("btnRight").removeAttribute('disabled');document.getElementById("btnLeft").removeAttribute('disabled');}, transitionTime * 1000);
 		  },
 		  buildSlider: function(container){
 		    var myHTML = "";
@@ -188,22 +191,25 @@
 		    document.getElementById(container).innerHTML = myHTML;
 		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).style.left = 0;
 		  },
-		  createButtons : function(container, isAppend, auto, time, direction) {
+		  createButtons : function(container, isAppend, auto, time, direction, transitionTime) {
 		    var slideContainer = document.getElementById("container-" + container);
 		    var btnLeft = document.createElement("BUTTON");
 		    var btnRight = document.createElement("BUTTON");
-		    var tl = document.createTextNode("<<");
-		    var tr = document.createTextNode(">>");
+		    var tl = document.createTextNode("");
+		    var tr = document.createTextNode("");
 
 
 		    btnLeft.appendChild(tl);
 		    btnRight.appendChild(tr);
 
-		    btnLeft.setAttribute('OnClick', 'slideCarousel.prevSlide("' + container + '", ' + auto + ', ' + time + ', ' + direction + ')');
-		    btnRight.setAttribute('OnClick', 'slideCarousel.nextSlide("'+ container + '", ' + auto + ', ' + time + ', ' + direction + ')');
+		    btnLeft.setAttribute('OnClick', 'slideCarousel.prevSlide("' + container + '", ' + auto + ', ' + time + ', ' + direction + ', this, ' + transitionTime + ')');
+		    btnRight.setAttribute('OnClick', 'slideCarousel.nextSlide("'+ container + '", ' + auto + ', ' + time + ', ' + direction + ', this, ' + transitionTime + ')');
 
 		    btnRight.className = "btnRight";
 		    btnLeft.className = "btnLeft";
+
+		    btnRight.id = "btnRight";
+		    btnLeft.id = "btnLeft";
 
 		    if(isAppend){
 		      slideContainer.appendChild(btnLeft);
@@ -213,7 +219,10 @@
 		      slideContainer.insertBefore(btnLeft, slideContainer.firstChild);
 		    }
 		  }, 
-		  prevSlide: function(container, auto, time, direction){
+		  prevSlide: function(container, auto, time, direction, obj, transitionTime){
+
+		    obj.setAttribute('disabled', true);
+		    document.getElementById("btnRight").setAttribute('disabled', true);
 		    if(auto)
 		      clearInterval(slideCarousel.timeAuto);
 		    var nextSlideIndex;
@@ -230,10 +239,14 @@
 		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutRight");
 		    
 		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		  	setTimeout(function() {obj.removeAttribute('disabled');document.getElementById("btnRight").removeAttribute('disabled');}, transitionTime * 1000);
 		    if(auto)
-		      slideCarousel.automaticSlide(container, time, direction);
+		      slideCarousel.automaticSlide(container, time, direction, transitionTime);
+		    
 		  },
-		  nextSlide: function(container, auto, time, direction){
+		  nextSlide: function(container, auto, time, direction, obj, transitionTime){
+		    obj.setAttribute('disabled', true);
+		    document.getElementById("btnLeft").setAttribute('disabled', true);
 		    if(auto)
 		      clearInterval(slideCarousel.timeAuto);
 		    var nextSlideIndex;
@@ -250,8 +263,9 @@
 		    document.getElementById(container + "_slide" + slideCarousel.currentSlideIndex).setAttribute("class", "singleSlide slideOutLeft");
 		    
 		    slideCarousel.currentSlideIndex = nextSlideIndex;
+		  	setTimeout(function() {obj.removeAttribute('disabled');document.getElementById("btnLeft").removeAttribute('disabled');}, transitionTime * 1000);
 		    if(auto)
-		      slideCarousel.automaticSlide(container, time, direction);
+		      slideCarousel.automaticSlide(container, time, direction, transitionTime);
 		  }
 
 		}
